@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.min.js"
+        integrity="sha512-SuxO9djzjML6b9w9/I07IWnLnQhgyYVSpHZx0JV97kGBfTIsUYlWflyuW4ypnvhBrslz1yJ3R+S14fdCWmSmSA=="
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.css"
+        integrity="sha512-C7hOmCgGzihKXzyPU/z4nv97W0d9bv4ALuuEbSf6hm93myico9qa0hv4dODThvCsqQUmKmLcJmlpRmCaApr83g=="
+        crossorigin="anonymous" />
+
+    <title>Dashboard - Rita Bosse Software GmbH</title>
+</head>
+
+<body>
+    <div class="card-group">
+        <div class="card" style="position: relative; height:40vh; width:80vw;">
+            <div class="card-body">
+                <h5 class="card-title">Umsatz der letzten 30 Tage</h5>
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.chartColors = {
+            red: 'rgb(255, 99, 132)',
+            orange: 'rgb(255, 159, 64)',
+            yellow: 'rgb(255, 205, 86)',
+            green: 'rgb(75, 192, 192)',
+            blue: 'rgb(54, 162, 235)',
+            purple: 'rgb(153, 102, 255)',
+            grey: 'rgb(201, 203, 207)'
+        };
+
+        var options = Chart.defaults.doughnut;
+        options.responsive = true;
+        options.legend.display = false;
+
+        var request = new XMLHttpRequest();
+        request.addEventListener('load', function(event) {
+            if (request.status >= 200 && request.status < 300) {
+                var ctx = document.getElementById('revenueChart').getContext('2d');
+
+                var json = JSON.parse(request.responseText);
+                var labels = json[0].data.map(function(e) {
+                    return e.x;
+                    }); 
+                
+                var data = {
+                    labels: labels,
+                    datasets: json
+                }
+
+                var myLineChart = new Chart(ctx, {
+                    type: 'line',
+                    data: data
+                });
+            } else {
+                console.warn(request.statusText, request.responseText);
+            }
+        });
+        request.open("GET","get.php");
+        request.setRequestHeader('objectIds', '47,50');
+        request.send('');
+    </script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
