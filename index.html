@@ -20,20 +20,9 @@
 </head>
 
 <body>
-    <div class="d-none card-group" id="chartContainer">
-        <div class="card" style="position: relative; height:40vh; width:80vw;">
-            <div class="card-body">
-                <h5 class="card-title">Inzidenz-Werte</h5>
-                <canvas id="revenueChart"></canvas>
-            </div>
-        </div>
+    <div class="container-fluid" id="chartContainer">
+        <canvas id="revenueChart"></canvas>
     </div>
-
-    <div class="d-flex justify-content-center" id="spinner">
-        <div class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-      </div>
 
     <script>
         window.chartColors = {
@@ -51,8 +40,6 @@
         var updateRequest = new XMLHttpRequest();
         updateRequest.addEventListener('load', function(event) {
             updateGraph();
-            document.body.removeChild(document.getElementById("spinner"));
-            $('#chartContainer').removeClass('d-none');
         });
         updateRequest.open("GET", "update.php");
         updateRequest.send('');
@@ -62,9 +49,7 @@
             request.addEventListener('load', function(event) {
                 if (request.status >= 200 && request.status < 300) {
                     var ctx = document.getElementById('revenueChart').getContext('2d');
-                    document.getElementById('revenueChart').height='100';
-
-
+                    
                     var json = JSON.parse(request.responseText);
                     var labels = json[0].data.map(function(e) {
                         return e.x;
@@ -88,7 +73,7 @@
             request.send('');
         }
 
-        
+        updateGraph();
     </script>
 
     <!-- Optional JavaScript -->
