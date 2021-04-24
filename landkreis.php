@@ -18,7 +18,7 @@
         public $y;
 
         public function __construct($datum, $wert) {
-            $d = DateTime::createFromFormat('Y-m-d H:i:s', $datum);
+            $d = DateTime::createFromFormat('Y-m-d', $datum);
             $this -> x = $d->format('d.m.Y');
             $this -> y = $wert;
         }
