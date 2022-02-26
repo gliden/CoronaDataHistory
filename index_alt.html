@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.min.js"
+        integrity="sha512-SuxO9djzjML6b9w9/I07IWnLnQhgyYVSpHZx0JV97kGBfTIsUYlWflyuW4ypnvhBrslz1yJ3R+S14fdCWmSmSA=="
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.css"
+        integrity="sha512-C7hOmCgGzihKXzyPU/z4nv97W0d9bv4ALuuEbSf6hm93myico9qa0hv4dODThvCsqQUmKmLcJmlpRmCaApr83g=="
+        crossorigin="anonymous" />
+
+    <title>Corona Dashboard</title>
+</head>
+
+<body>
+    <div class="container-fluid" id="chartContainer">
+        <canvas id="revenueChart"></canvas>
+    </div>
+
+    <script>
+        window.chartColors = {
+            red: 'rgb(255, 99, 132)',
+            orange: 'rgb(255, 159, 64)',
+            yellow: 'rgb(255, 205, 86)',
+            green: 'rgb(75, 192, 192)',
+            blue: 'rgb(54, 162, 235)',
+            purple: 'rgb(153, 102, 255)',
+            grey: 'rgb(201, 203, 207)'
+        };
+
+        var ctx = document.getElementById('revenueChart').getContext('2d');
+        var myLineChart = new Chart(ctx, {
+            type: 'line',
+            data: null
+        });
+
+        
+
+        var updateRequest = new XMLHttpRequest();
+        updateRequest.addEventListener('load', function(event) {
+            updateGraph(myLineChart);            
+        });
+
+        updateRequest.open("GET", "update.php");
+        updateRequest.send('');
+
+        function updateGraph(chart) {
+            var request = new XMLHttpRequest();
+            request.addEventListener('load', function(event) {
+                if (request.status >= 200 && request.status < 300) {
+                    var json = JSON.parse(request.responseText);
+                    var labels = json[0].data.map(function(e) {
+                        return e.x;
+                        }); 
+                    
+                    var data = {
+                        labels: labels,
+                        datasets: json
+                    }
+                    chart.data = data;
+                    chart.update();
+                } else {
+                    console.warn(request.statusText, request.responseText);
+                }
+            });
+            request.open("GET","get.php");
+            request.setRequestHeader('objectIds', '47,50');
+            request.send('');
+        }
+
+        updateGraph(myLineChart);
+    </script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+
+</html>
